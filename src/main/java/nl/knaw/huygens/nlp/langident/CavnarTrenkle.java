@@ -1,14 +1,11 @@
 package nl.knaw.huygens.nlp.langident;
 
-import nl.knaw.huygens.nlp.CharNGram;
 import nl.knaw.huygens.util.Collections2;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Cavnar-Trenkle style (n-gram frequency ranking) language guesser.
@@ -18,9 +15,7 @@ import java.util.stream.Stream;
  */
 public class CavnarTrenkle extends NGramFeaturesClassifier {
     // Keep only this many n-grams for classification.
-    protected int cutoff = 400;
-
-    private List<String> labels;
+    private int cutoff = 400;
 
     // N-gram frequency ranks: maps label -> n-gram -> frequency.
     private Map<String, Map<CharSequence, Integer>> rankPerLabel;
@@ -39,16 +34,16 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
     }
 
     public void train(List<CharSequence> docs, List<String> labels) {
-        Set<String> labelSet = new HashSet<String>();
+        Set<String> labelSet = new HashSet<>();
 
-        Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<String, Map<CharSequence, Long>>();
-        rankPerLabel = new HashMap<String, Map<CharSequence, Integer>>();
+        Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
+        rankPerLabel = new HashMap<>();
 
         for (int i = 0; i < docs.size(); i++) {
             String label = labels.get(i);
             labelSet.add(label);
-            freqPerLabel.put(label, new HashMap<CharSequence, Long>());
-            rankPerLabel.put(label, new HashMap<CharSequence, Integer>());
+            freqPerLabel.put(label, new HashMap<>());
+            rankPerLabel.put(label, new HashMap<>());
         }
 
         for (int i = 0; i < docs.size(); i++) {
@@ -67,8 +62,6 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
                 ranks.put(sorted[rank], rank);
             }
         });
-
-        this.labels = labelSet.stream().collect(Collectors.toList());
     }
 
     // Convert frequency table to list of the <cutoff> most frequent items, in sorted order.
@@ -86,6 +79,7 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
         CharSequence[] sorted = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
                 Collectors.counting())));
 
+        List<String> labels = rankPerLabel.keySet().stream().collect(Collectors.toList());
         long[] distances = IntStream.range(0, labels.size()).parallel().mapToLong(i ->
                 distance(sorted, labels.get(i))).toArray();
         return labels.get(IntStream.range(0, labels.size()).boxed()
