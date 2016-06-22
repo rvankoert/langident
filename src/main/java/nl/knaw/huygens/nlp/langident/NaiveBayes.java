@@ -1,14 +1,6 @@
 package nl.knaw.huygens.nlp.langident;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import nl.knaw.huygens.nlp.CharNGram;
+import java.util.*;
 
 /**
  * Naive Bayes classifier for language identification.
@@ -52,7 +44,7 @@ public class NaiveBayes extends NGramFeaturesClassifier {
      * @param labels
      */
     @Override
-    public void train(List<CharSequence> docs, List<String> labels) {
+    public Classifier train(List<CharSequence> docs, List<String> labels) {
         featureProb = new HashMap<String, Map<CharSequence, Double>>();
         this.labels = new HashSet<String>();
 
@@ -84,6 +76,8 @@ public class NaiveBayes extends NGramFeaturesClassifier {
                         Math.log(count + pseudocount) - Math.log(totalCount + pseudocount * totalCounts.size()));
             });
         });
+
+        return this;
     }
 
     /**

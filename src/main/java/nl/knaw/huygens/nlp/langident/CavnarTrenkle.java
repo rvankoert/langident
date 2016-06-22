@@ -33,7 +33,7 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
         this.maxN = maxN;
     }
 
-    public void train(List<CharSequence> docs, List<String> labels) {
+    public Classifier train(List<CharSequence> docs, List<String> labels) {
         Set<String> labelSet = new HashSet<>();
 
         Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
@@ -62,6 +62,8 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
                 ranks.put(sorted[rank], rank);
             }
         });
+
+        return this;
     }
 
     // Convert frequency table to list of the <cutoff> most frequent items, in sorted order.
@@ -92,7 +94,7 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
         Map<CharSequence, Integer> labelProfile = rankPerLabel.get(label);
         return IntStream.range(0, profile.length).parallel().mapToLong(rank -> {
             CharSequence ngram = profile[rank];
-            return (long)labelProfile.getOrDefault(ngram, cutoff);
+            return (long) labelProfile.getOrDefault(ngram, cutoff);
         }).sum();
     }
 }
