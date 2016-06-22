@@ -13,6 +13,6 @@ public abstract class NGramFeaturesClassifier implements Classifier {
 
     // Feature extraction.
     protected Stream<CharSequence> features(CharSequence doc) {
-        return CharNGram.generate(doc, minN, maxN);
+        return CharNGram.generate(doc.toString().toLowerCase(), minN, maxN);
     }
 }
