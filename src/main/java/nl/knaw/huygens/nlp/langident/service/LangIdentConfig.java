@@ -5,16 +5,16 @@ import io.dropwizard.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
 class LangIdentConfig extends Configuration {
-    @NotEmpty
-    private String defaultModel;
+  @NotEmpty
+  private String defaultModel;
 
-    @JsonProperty
-    public String getDefaultModel() {
-        return defaultModel;
-    }
+  @JsonProperty
+  public String getDefaultModel() {
+    return defaultModel;
+  }
 
-    @JsonProperty
-    public void setDefaultModel(String defaultModel) {
-        this.defaultModel = defaultModel;
-    }
+  @JsonProperty
+  public void setDefaultModel(String defaultModel) {
+    this.defaultModel = defaultModel;
+  }
 }

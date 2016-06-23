@@ -13,25 +13,25 @@ import java.util.Set;
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
 public class LangIdentResource {
-    private final String defaultModel;
-    private final Map<String, Classifier> models;
+  private final String defaultModel;
+  private final Map<String, Classifier> models;
 
-    public LangIdentResource(String defaultModel, Map<String, Classifier> models) {
-        this.defaultModel = defaultModel;
-        this.models = models;
-    }
+  public LangIdentResource(String defaultModel, Map<String, Classifier> models) {
+    this.defaultModel = defaultModel;
+    this.models = models;
+  }
 
-    @POST
-    @Timed
-    public Result classify(@FormParam("text") String text, @FormParam("model") Optional<String> modelName) {
-        Classifier classifier = models.get(modelName.or(defaultModel));
-        return new Result(classifier.predict(text));
-    }
+  @POST
+  @Timed
+  public Result classify(@FormParam("text") String text, @FormParam("model") Optional<String> modelName) {
+    Classifier classifier = models.get(modelName.or(defaultModel));
+    return new Result(classifier.predict(text));
+  }
 
-    @GET
-    @Path("/list")
-    @Timed
-    public Set<String> listModels() {
-        return models.keySet();
-    }
+  @GET
+  @Path("/list")
+  @Timed
+  public Set<String> listModels() {
+    return models.keySet();
+  }
 }
