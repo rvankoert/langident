@@ -9,8 +9,6 @@ import java.util.*;
  * n <= 7, and a uniform prior over languages.
  */
 public class NaiveBayes extends NGramFeaturesClassifier {
-  private static final long serialVersionUID = 915582140959386023L;
-
   // Laplace/Lidstone smoothing parameter, currently fixed.
   private double pseudocount = 1.;
 

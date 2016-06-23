@@ -1,12 +1,11 @@
 package nl.knaw.huygens.nlp.langident;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * A trainable language identifier.
  */
-public interface Classifier extends Serializable {
+public interface Classifier {
   /**
    * Train classifier.
    *
