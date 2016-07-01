@@ -2,7 +2,6 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 
 import org.junit.Assert;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class LanguageGuesserTest {
     "che nel pensier rinova la paura!"
   };
 
-  protected void test(LanguageGuesser guesser) throws ClassNotFoundException, IOException {
+  protected void test(LanguageGuesser guesser) {
     List<CharSequence> samples = new ArrayList<CharSequence>();
     List<String> labels = new ArrayList<String>();
 
