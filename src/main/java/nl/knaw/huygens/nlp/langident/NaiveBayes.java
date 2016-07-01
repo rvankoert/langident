@@ -1,6 +1,10 @@
 package nl.knaw.huygens.nlp.langident;
 
+import nl.knaw.huygens.util.Math2;
+
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
  * Naive Bayes classifier for language identification.
@@ -8,7 +12,7 @@ import java.util.*;
  * This is a multinomial Naive Bayes classifier using n-gram features, for 2 <=
  * n <= 7, and a uniform prior over languages.
  */
-public class NaiveBayes extends NGramFeaturesClassifier {
+public class NaiveBayes extends LanguageGuesser {
   // Laplace/Lidstone smoothing parameter, currently fixed.
   private double pseudocount = 1.;
 
@@ -42,7 +46,7 @@ public class NaiveBayes extends NGramFeaturesClassifier {
    * @param labels
    */
   @Override
-  public Classifier train(List<CharSequence> docs, List<String> labels) {
+  public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
     featureProb = new HashMap<String, Map<CharSequence, Double>>();
     this.labels = new HashSet<String>();
 
@@ -78,29 +82,13 @@ public class NaiveBayes extends NGramFeaturesClassifier {
     return this;
   }
 
-  /**
-   * Predict label for doc.
-   *
-   * @param doc
-   * @return
-   */
   @Override
-  public String predict(CharSequence doc) {
-    Map<String, Double> prob = decisionFunction(doc);
-    return prob.entrySet().stream()
-      .max((candidate1, candidate2) -> Double.compare(candidate1.getValue(), candidate2.getValue())) //
-      .get().getKey();
+  public Set<String> languages() {
+    return featureProb.keySet();
   }
 
-  /**
-   * Decision function: returns an unnormalized (log-)probability distribution
-   * over the labels for doc.
-   *
-   * @param doc
-   * @return
-   */
-  private Map<String, Double> decisionFunction(CharSequence doc) {
-    Map<String, Double> prob = new HashMap<String, Double>();
+  protected Stream<Prediction> predictStream(CharSequence doc) {
+    Map<String, Double> prob = new ConcurrentHashMap<>();
 
     final double prior = -Math.log(labels.size());    // Uniform prior.
     for (String label : labels) {
@@ -113,6 +101,9 @@ public class NaiveBayes extends NGramFeaturesClassifier {
       });
     });
 
-    return prob;
+    double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
+      .reduce(Math2::logAddExp).getAsDouble();
+    return prob.entrySet().parallelStream().map(entry ->
+      new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
   }
 }

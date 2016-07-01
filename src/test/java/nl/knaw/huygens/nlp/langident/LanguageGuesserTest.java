@@ -2,15 +2,19 @@ package nl.knaw.huygens.nlp.langident;
 
 import org.junit.Assert;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Base class for language guesser tests. Actual test cases should call the test()
+// method on a specific LanguageGuesser instance.
 public class LanguageGuesserTest {
-  private static String[] latin = new String[]{
-    "Quod licet Iovi, non licet bovi.",
-    "Ut desint vires, tamen laudanda est voluntas.",
-    "Quis deus incertum est."
+  private static String[] english = new String[]{
+    "IN Xanadu did Kubla Khan",
+    "﻿A stately pleasure-dome decree:",
+    "﻿Where Alph, the sacred river, ran",
+    "﻿Through caverns measureless to man",
+    "﻿Down to a sunless sea.",
   };
 
   private static String[] dutch = new String[]{ //
@@ -29,13 +33,13 @@ public class LanguageGuesserTest {
     "che nel pensier rinova la paura!"
   };
 
-  public void test(Classifier classifier) throws ClassNotFoundException, IOException {
+  protected void test(LanguageGuesser guesser) throws ClassNotFoundException, IOException {
     List<CharSequence> samples = new ArrayList<CharSequence>();
     List<String> labels = new ArrayList<String>();
 
-    for (String sample : latin) {
+    for (String sample : english) {
       samples.add(sample);
-      labels.add("la");
+      labels.add("en");
     }
     for (String sample : dutch) {
       samples.add(sample);
@@ -46,21 +50,22 @@ public class LanguageGuesserTest {
       labels.add("it");
     }
 
-    classifier.train(samples, labels);
-    simpleExamples(classifier);
+    guesser = guesser.train(samples, labels);
 
-    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    ObjectOutputStream str = new ObjectOutputStream(bytes);
-    str.writeObject(classifier);
-    classifier = (Classifier) new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray())).readObject();
+    Assert.assertEquals("it", guesser.predictBest("lasciate ogni speranza, voi ch'intrate"));
+    Assert.assertEquals("en", guesser.predictBest("The end is nigh."));
+    Assert.assertEquals("nl", guesser.predictBest("scheveningen"));
 
-    simpleExamples(classifier);
+    String[] langs = guesser.languages().stream().sorted().toArray(String[]::new);
+    Assert.assertArrayEquals(new String[]{"en", "it", "nl"}, langs);
+
+    List<LanguageGuesser.Prediction> pred = guesser.predictScores("Hallo, wereld!");
+    Assert.assertArrayEquals(langs,
+      pred.stream().map(LanguageGuesser.Prediction::getLang).sorted().toArray());
+
+    // We want the languages by descending order of scores.
+    for (int i = 1; i < pred.size(); i++) {
+      Assert.assertTrue(pred.get(i - 1).getScore() >= pred.get(i).getScore());
+    }
   }
-
-  private void simpleExamples(Classifier classifier) {
-    Assert.assertEquals("it", classifier.predict("lasciate ogni speranza, voi ch'intrate"));
-    Assert.assertEquals("la", classifier.predict("Ut desint viri, tamen laudanda est voluptas."));
-    Assert.assertEquals("nl", classifier.predict("scheveningen"));
-  }
-
 }

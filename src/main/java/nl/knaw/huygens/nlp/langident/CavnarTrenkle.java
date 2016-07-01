@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Cavnar-Trenkle style (n-gram frequency ranking) language guesser.
@@ -13,8 +14,9 @@ import java.util.stream.IntStream;
  * After W.B. Cavnar & J.M. Trenkle, N-gram-based text categorization, SDAIR-1994,
  * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.9367
  */
-public class CavnarTrenkle extends NGramFeaturesClassifier {
-  // Keep only this many n-grams for classification.
+public class CavnarTrenkle extends LanguageGuesser {
+  // Keep only this many n-grams for classification. This should be a training-time option,
+  // but is hardcoded for now.
   private int cutoff = 400;
 
   // N-gram frequency ranks: maps label -> n-gram -> frequency.
@@ -33,7 +35,7 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
     this.maxN = maxN;
   }
 
-  public Classifier train(List<CharSequence> docs, List<String> labels) {
+  public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
     Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
@@ -77,21 +79,44 @@ public class CavnarTrenkle extends NGramFeaturesClassifier {
       .toArray(CharSequence[]::new);
   }
 
-  public String predict(CharSequence doc) {
-    CharSequence[] sorted = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
+//  public String predictBest(CharSequence doc) {
+//    CharSequence[] sorted = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
+//      Collectors.counting())));
+//
+//    List<String> labels = rankPerLabel.keySet().stream().collect(Collectors.toList());
+//    long[] distances = IntStream.range(0, labels.size()).parallel().mapToLong(i ->
+//      distance(sorted, labels.get(i))).toArray();
+//    return labels.get(IntStream.range(0, labels.size()).boxed()
+//      .collect(Collectors.minBy((i, j) -> Long.compare(distances[i], distances[j])))
+//      .get());
+//  }
+
+  @Override
+  public Set<String> languages() {
+    return rankPerLabel.keySet();
+  }
+
+  @Override
+  protected Stream<Prediction> predictStream(CharSequence doc) {
+    CharSequence[] docProfile = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
       Collectors.counting())));
 
-    List<String> labels = rankPerLabel.keySet().stream().collect(Collectors.toList());
-    long[] distances = IntStream.range(0, labels.size()).parallel().mapToLong(i ->
-      distance(sorted, labels.get(i))).toArray();
-    return labels.get(IntStream.range(0, labels.size()).boxed()
-      .collect(Collectors.minBy((i, j) -> Long.compare(distances[i], distances[j])))
-      .get());
+    return rankPerLabel.entrySet().parallelStream()
+      .map(entry -> {
+        String label = entry.getKey();
+        long dist = distance(docProfile, entry.getValue());
+        // The predictBest method wants scores with "higher is better", but what
+        // we have are distances ("smaller is better"). The following is an
+        // arbitrary way of converting these into scores; the +1 prevents zero
+        // division.
+        double score = 1. / (dist + 1.);
+
+        return new Prediction(label, score);
+      });
   }
 
   // Cavnar-Trenkle "out of place distance" between two ranked lists.
-  private long distance(CharSequence[] profile, String label) {
-    Map<CharSequence, Integer> labelProfile = rankPerLabel.get(label);
+  private long distance(CharSequence[] profile, Map<CharSequence, Integer> labelProfile) {
     return IntStream.range(0, profile.length).parallel().mapToLong(rank -> {
       CharSequence ngram = profile[rank];
       return (long) labelProfile.getOrDefault(ngram, cutoff);

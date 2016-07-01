@@ -51,9 +51,8 @@ public class Collections2 {
       hi = pivotIndex;
     }
 
-    k = Math.min(k, hi - lo);
     // Selection sort.
-    for (; k > 0; k--, lo++) {
+    for (k = Math.min(k, hi - lo); k > 0; k--, lo++) {
       T min = a.get(lo);
       int minIndex = lo;
       for (int i = lo + 1; i < hi; i++) {

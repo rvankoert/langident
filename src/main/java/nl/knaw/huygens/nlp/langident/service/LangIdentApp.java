@@ -6,7 +6,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.knaw.huygens.nlp.langident.CavnarTrenkle;
-import nl.knaw.huygens.nlp.langident.Classifier;
+import nl.knaw.huygens.nlp.langident.LanguageGuesser;
 import nl.knaw.huygens.nlp.langident.NaiveBayes;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LangIdentApp extends Application<LangIdentConfig> {
-  private final Map<String, Classifier> models = new HashMap<>();
+  private final Map<String, LanguageGuesser> models = new HashMap<>();
 
   private LangIdentApp() throws ClassNotFoundException, IOException {
     // Load training data from our packaged JSON file. The format is [[label, doc], ...].
