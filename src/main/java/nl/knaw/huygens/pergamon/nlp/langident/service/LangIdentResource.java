@@ -1,8 +1,8 @@
-package nl.knaw.huygens.nlp.langident.service;
+package nl.knaw.huygens.pergamon.nlp.langident.service;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
-import nl.knaw.huygens.nlp.langident.LanguageGuesser;
+import nl.knaw.huygens.pergamon.nlp.langident.LanguageGuesser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

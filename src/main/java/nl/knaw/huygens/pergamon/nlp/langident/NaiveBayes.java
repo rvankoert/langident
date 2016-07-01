@@ -1,6 +1,6 @@
-package nl.knaw.huygens.nlp.langident;
+package nl.knaw.huygens.pergamon.nlp.langident;
 
-import nl.knaw.huygens.util.Math2;
+import nl.knaw.huygens.pergamon.util.Math2;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

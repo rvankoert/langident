@@ -1,4 +1,4 @@
-package nl.knaw.huygens.nlp.langident.service;
+package nl.knaw.huygens.pergamon.nlp.langident.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;

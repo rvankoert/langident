@@ -1,13 +1,13 @@
-package nl.knaw.huygens.nlp.langident.service;
+package nl.knaw.huygens.pergamon.nlp.langident.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import nl.knaw.huygens.nlp.langident.CavnarTrenkle;
-import nl.knaw.huygens.nlp.langident.LanguageGuesser;
-import nl.knaw.huygens.nlp.langident.NaiveBayes;
+import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
+import nl.knaw.huygens.pergamon.nlp.langident.LanguageGuesser;
+import nl.knaw.huygens.pergamon.nlp.langident.NaiveBayes;
 
 import java.io.IOException;
 import java.io.InputStream;

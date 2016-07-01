@@ -1,4 +1,4 @@
-package nl.knaw.huygens.util;
+package nl.knaw.huygens.pergamon.util;
 
 public class Math2 {
   /**
