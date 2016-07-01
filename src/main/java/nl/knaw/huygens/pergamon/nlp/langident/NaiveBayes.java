@@ -2,7 +2,10 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 
 import nl.knaw.huygens.pergamon.util.Math2;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -15,8 +18,6 @@ import java.util.stream.Stream;
 public class NaiveBayes extends LanguageGuesser {
   // Laplace/Lidstone smoothing parameter, currently fixed.
   private double pseudocount = 1.;
-
-  private Set<String> labels;
 
   // Feature log-probabilities per label.
   // Maps label -> ngram -> log(P(ngram)).
@@ -48,7 +49,6 @@ public class NaiveBayes extends LanguageGuesser {
   @Override
   public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
     featureProb = new HashMap<String, Map<CharSequence, Double>>();
-    this.labels = new HashSet<String>();
 
     if (docs.size() != labels.size()) {
       throw new IllegalArgumentException(String.format("%d samples != %d labels", docs.size(), labels.size()));
@@ -56,7 +56,6 @@ public class NaiveBayes extends LanguageGuesser {
 
     for (String label : labels) {
       featureProb.put(label, new HashMap<CharSequence, Double>());
-      this.labels.add(label);
     }
 
     for (int i = 0; i < docs.size(); i++) {
@@ -90,6 +89,7 @@ public class NaiveBayes extends LanguageGuesser {
   protected Stream<Prediction> predictStream(CharSequence doc) {
     Map<String, Double> prob = new ConcurrentHashMap<>();
 
+    Set<String> labels = languages();
     final double prior = -Math.log(labels.size());    // Uniform prior.
     for (String label : labels) {
       prob.put(label, prior);
@@ -103,7 +103,7 @@ public class NaiveBayes extends LanguageGuesser {
 
     double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
       .reduce(Math2::logAddExp).getAsDouble();
-    return prob.entrySet().parallelStream().map(entry ->
+    return prob.entrySet().stream().map(entry ->
       new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
   }
 }
