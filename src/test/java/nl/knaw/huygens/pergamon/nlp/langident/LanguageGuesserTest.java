@@ -11,10 +11,10 @@ import java.util.List;
 public class LanguageGuesserTest {
   private static String[] english = new String[]{
     "IN Xanadu did Kubla Khan",
-    "﻿A stately pleasure-dome decree:",
-    "﻿Where Alph, the sacred river, ran",
-    "﻿Through caverns measureless to man",
-    "﻿Down to a sunless sea.",
+    "A stately pleasure-dome decree:",
+    "Where Alph, the sacred river, ran",
+    "Through caverns measureless to man",
+    "Down to a sunless sea.",
   };
 
   private static String[] dutch = new String[]{ //
