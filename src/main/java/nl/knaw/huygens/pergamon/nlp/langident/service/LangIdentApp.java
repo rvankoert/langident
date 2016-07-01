@@ -6,6 +6,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
+import nl.knaw.huygens.pergamon.nlp.langident.CumulativeFrequency;
 import nl.knaw.huygens.pergamon.nlp.langident.LanguageGuesser;
 import nl.knaw.huygens.pergamon.nlp.langident.NaiveBayes;
 
@@ -34,6 +35,7 @@ public class LangIdentApp extends Application<LangIdentConfig> {
     // We train our models here because training them is much cheaper than serializing and deserializing them
     // (Naive Bayes models tend to get big because there's no feature selection).
     models.put("cavnartrenkle", new CavnarTrenkle().train(docs, labels));
+    models.put("cumfreq", new CumulativeFrequency().train(docs, labels));
     models.put("naivebayes", new NaiveBayes().train(docs, labels));
   }
 

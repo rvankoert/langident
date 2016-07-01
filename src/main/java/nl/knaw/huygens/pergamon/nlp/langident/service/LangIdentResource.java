@@ -6,6 +6,7 @@ import nl.knaw.huygens.pergamon.nlp.langident.LanguageGuesser;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,9 +24,17 @@ public class LangIdentResource {
 
   @POST
   @Timed
-  public Result classify(@FormParam("text") String text, @FormParam("model") Optional<String> modelName) {
+  public List<LanguageGuesser.Prediction> classify(@FormParam("text") String text, @FormParam("model") Optional<String> modelName) {
     LanguageGuesser model = models.get(modelName.or(defaultModel));
-    return new Result(model.predictBest(text));
+    return (model.predictScores(text));
+  }
+
+  @GET
+  @Timed
+  @Path("/languages")
+  public Set<String> listLanguages(@QueryParam("model") Optional<String> modelName) {
+    LanguageGuesser model = models.get(modelName.or(defaultModel));
+    return model.languages();
   }
 
   @GET
