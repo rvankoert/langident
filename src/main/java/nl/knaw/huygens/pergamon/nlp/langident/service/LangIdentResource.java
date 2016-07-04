@@ -26,7 +26,7 @@ public class LangIdentResource {
   @Timed
   public List<LanguageGuesser.Prediction> classify(@FormParam("text") String text, @FormParam("model") Optional<String> modelName) {
     LanguageGuesser model = models.get(modelName.or(defaultModel));
-    return (model.predictScores(text));
+    return model.predictScores(text);
   }
 
   @GET
