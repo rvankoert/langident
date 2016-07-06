@@ -1,6 +1,6 @@
 package nl.knaw.huygens.pergamon.nlp.langident;
 
-import nl.knaw.huygens.pergamon.util.Collections2;
+import nl.knaw.huygens.algomas.Sort;
 
 import java.util.*;
 import java.util.function.Function;
@@ -72,7 +72,7 @@ public class CavnarTrenkle extends LanguageGuesser {
   private CharSequence[] freqsToRanks(Map<CharSequence, Long> freqs) {
     List<Map.Entry<CharSequence, Long>> entries = freqs.entrySet().stream().collect(Collectors.toList());
 
-    Collections2.partialSort(entries, (e1, e2) -> Long.compare(e2.getValue(), e1.getValue()), cutoff);
+    Sort.partial(entries, (e1, e2) -> Long.compare(e2.getValue(), e1.getValue()), cutoff);
 
     return entries.subList(0, Math.min(cutoff, entries.size())).stream()
       .map(entry -> entry.getKey())

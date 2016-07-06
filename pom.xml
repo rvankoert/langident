@@ -65,6 +65,23 @@
     </plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <id>huygens</id>
+      <url>http://maven.huygens.knaw.nl/repository/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>io.dropwizard</groupId>
@@ -76,6 +93,11 @@
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>nl.knaw.huygens.algomas</groupId>
+      <artifactId>algomas-core</artifactId>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
 </project>
