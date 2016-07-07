@@ -1,6 +1,6 @@
 package nl.knaw.huygens.pergamon.nlp.langident;
 
-import nl.knaw.huygens.pergamon.util.Math2;
+import nl.knaw.huygens.algomas.ExtMath;
 
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +102,7 @@ public class NaiveBayes extends LanguageGuesser {
     });
 
     double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
-      .reduce(Math2::logAddExp).getAsDouble();
+      .reduce(ExtMath::logAddExp).getAsDouble();
     return prob.entrySet().stream().map(entry ->
       new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
   }
