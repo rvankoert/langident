@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <inceptionYear>2016</inceptionYear>
 
   <groupId>nl.knaw.huygens.pergamon</groupId>
   <artifactId>langident</artifactId>
@@ -14,6 +15,11 @@
     <dropwizard.version>0.9.3</dropwizard.version>
   </properties>
 
+  <organization>
+    <name>Huygens ING (KNAW)</name>
+    <url>http://www.huygens.knaw.nl</url>
+  </organization>
+
   <build>
     <plugins>
       <plugin>
@@ -23,6 +29,24 @@
           <target>${jdk.version}</target>
           <encoding>UTF-8</encoding>
           <showDeprecation>true</showDeprecation>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <licenseName>gpl_v3</licenseName>
+          <canUpdateCopyright>true</canUpdateCopyright>
         </configuration>
       </plugin>
 
