@@ -22,7 +22,7 @@ package nl.knaw.huygens.pergamon.nlp.langident;
  * #L%
  */
 
-import nl.knaw.huygens.pergamon.nlp.CharNGram;
+import nl.knaw.huygens.algomas.nlp.NGrams;
 
 import java.util.List;
 import java.util.Set;
@@ -107,7 +107,7 @@ public abstract class LanguageGuesser {
    * @return A sequential stream of n-grams, with minN <= n <= maxN.
    */
   protected final Stream<CharSequence> features(CharSequence doc) {
-    return CharNGram.generate(preprocess(doc.toString()), minN, maxN);
+    return NGrams.ofChars(minN, maxN, preprocess(doc.toString()));
   }
 
   /**
