@@ -22,20 +22,31 @@ package nl.knaw.huygens.pergamon.nlp.langident;
  * #L%
  */
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class NaiveBayesTest extends LanguageGuesserTest {
-  @Test
-  public void test() throws IOException, ClassNotFoundException {
-    Trainer nb = new NaiveBayes();
-    Model model = test(nb);
+import static java.util.Comparator.comparing;
 
-    List<Model.Prediction> pred = model.predictScores("zomaar een testje");
-    double total = pred.stream().mapToDouble(Model.Prediction::getScore).sum();
-    Assert.assertTrue(Math.abs(total - 1) < 1e-14);
+/**
+ * Abstract base class for machine-learned language guessers, i.e., string classifiers
+ * based on character n-gram features.
+ * <p>
+ * Handles n-gram extraction and problem-specific preprocessing.
+ */
+abstract class BaseModel implements Model {
+  @Override
+  public String predictBest(CharSequence doc) {
+    return predictStream(doc).max(comparing(Prediction::getScore)).get().getLabel();
   }
+
+  @Override
+  public List<Prediction> predictScores(CharSequence doc) {
+    return predictStream(doc).sorted(comparing(pred -> -pred.getScore())).collect(Collectors.toList());
+  }
+
+  /**
+   * The actual prediction function.
+   */
+  protected abstract Stream<Prediction> predictStream(CharSequence doc);
 }

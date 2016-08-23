@@ -37,13 +37,50 @@ import java.util.stream.Stream;
  * This is a multinomial Naive Bayes classifier using n-gram features, for 2 <=
  * n <= 7, and a uniform prior over languages.
  */
-public class NaiveBayes extends LanguageGuesser {
-  // Laplace/Lidstone smoothing parameter, currently fixed.
-  private double pseudocount = 1.;
+public class NaiveBayes extends BaseTrainer {
+  private class NBModel extends BaseModel {
+    // Feature log-probabilities per label.
+    // Maps label -> ngram -> log(P(ngram)).
+    private Map<String, Map<CharSequence, Double>> featureProb;
 
-  // Feature log-probabilities per label.
-  // Maps label -> ngram -> log(P(ngram)).
-  private Map<String, Map<CharSequence, Double>> featureProb;
+    public NBModel() {
+      featureProb = new HashMap<>();
+    }
+
+    @Override
+    public Trainer getTrainer() {
+      return NaiveBayes.this;
+    }
+
+    @Override
+    public Set<String> languages() {
+      return featureProb.keySet();
+    }
+
+    protected Stream<Prediction> predictStream(CharSequence doc) {
+      Map<String, Double> prob = new ConcurrentHashMap<>();
+
+      Set<String> labels = languages();
+      final double prior = -Math.log(labels.size());    // Uniform prior.
+      for (String label : labels) {
+        prob.put(label, prior);
+      }
+
+      features(doc).forEach(ngram -> {
+        labels.forEach(label -> {
+          prob.put(label, prob.get(label) + featureProb.get(label).getOrDefault(ngram, 0.));
+        });
+      });
+
+      double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
+        .reduce(ExtMath::logAddExp).getAsDouble();
+      return prob.entrySet().stream().map(entry ->
+        new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
+    }
+  }
+
+  // Laplace/Lidstone smoothing parameter.
+  private double pseudocount = 1.;
 
   /**
    * Construct untrained classifier with default settings.
@@ -62,15 +99,14 @@ public class NaiveBayes extends LanguageGuesser {
    * <p>
    * Each i'th element of docs is expected have the i'th label in labels. If
    * the length of these two arrays doesn't match, an exception is thrown.
-   * <p>
-   * Calling train a second time retrains the model.
    *
    * @param docs
    * @param labels
    */
   @Override
-  protected void train(List<CharSequence> docs, List<String> labels) {
-    featureProb = new HashMap<>();
+  protected Model train(List<CharSequence> docs, List<String> labels) {
+    NBModel model = new NBModel();
+    Map<String, Map<CharSequence, Double>> featureProb = model.featureProb;
 
     if (docs.size() != labels.size()) {
       throw new IllegalArgumentException(String.format("%d samples != %d labels", docs.size(), labels.size()));
@@ -99,31 +135,7 @@ public class NaiveBayes extends LanguageGuesser {
           Math.log(count + pseudocount) - Math.log(totalCount + pseudocount * totalCounts.size()));
       });
     });
-  }
 
-  @Override
-  public Set<String> languages() {
-    return featureProb.keySet();
-  }
-
-  protected Stream<Prediction> predictStream(CharSequence doc) {
-    Map<String, Double> prob = new ConcurrentHashMap<>();
-
-    Set<String> labels = languages();
-    final double prior = -Math.log(labels.size());    // Uniform prior.
-    for (String label : labels) {
-      prob.put(label, prior);
-    }
-
-    features(doc).forEach(ngram -> {
-      labels.forEach(label -> {
-        prob.put(label, prob.get(label) + featureProb.get(label).getOrDefault(ngram, 0.));
-      });
-    });
-
-    double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
-      .reduce(ExtMath::logAddExp).getAsDouble();
-    return prob.entrySet().stream().map(entry ->
-      new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
+    return model;
   }
 }
