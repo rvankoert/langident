@@ -101,18 +101,6 @@ public class CavnarTrenkle extends LanguageGuesser {
       .toArray(CharSequence[]::new);
   }
 
-//  public String predictBest(CharSequence doc) {
-//    CharSequence[] sorted = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
-//      Collectors.counting())));
-//
-//    List<String> labels = rankPerLabel.keySet().stream().collect(Collectors.toList());
-//    long[] distances = IntStream.range(0, labels.size()).parallel().mapToLong(i ->
-//      distance(sorted, labels.get(i))).toArray();
-//    return labels.get(IntStream.range(0, labels.size()).boxed()
-//      .collect(Collectors.minBy((i, j) -> Long.compare(distances[i], distances[j])))
-//      .get());
-//  }
-
   @Override
   public Set<String> languages() {
     return rankPerLabel.keySet();
