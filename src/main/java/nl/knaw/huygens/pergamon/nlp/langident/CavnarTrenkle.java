@@ -57,7 +57,7 @@ public class CavnarTrenkle extends LanguageGuesser {
     this.maxN = maxN;
   }
 
-  public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
+  protected void train(List<CharSequence> docs, List<String> labels) {
     Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
@@ -86,8 +86,6 @@ public class CavnarTrenkle extends LanguageGuesser {
         ranks.put(sorted[rank], rank);
       }
     });
-
-    return this;
   }
 
   // Convert frequency table to list of the <cutoff> most frequent items, in sorted order.

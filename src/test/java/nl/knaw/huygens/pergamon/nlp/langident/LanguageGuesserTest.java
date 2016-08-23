@@ -71,7 +71,7 @@ public class LanguageGuesserTest {
       labels.add("it");
     }
 
-    guesser = guesser.train(samples, labels);
+    guesser = guesser.train(new TrainingSet(samples, labels));
 
     Assert.assertEquals("it", guesser.predictBest("lasciate ogni speranza, voi ch'intrate"));
     Assert.assertEquals("en", guesser.predictBest("The end is nigh."));

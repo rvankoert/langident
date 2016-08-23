@@ -60,7 +60,7 @@ public class CumulativeFrequency extends LanguageGuesser {
   }
 
   @Override
-  public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
+  protected void train(List<CharSequence> docs, List<String> labels) {
     featureFreq = new HashMap<String, Map<CharSequence, Double>>();
 
     if (docs.size() != labels.size()) {
@@ -89,7 +89,5 @@ public class CumulativeFrequency extends LanguageGuesser {
         prob.put(ngram, count / totalCount);
       });
     });
-
-    return this;
   }
 }

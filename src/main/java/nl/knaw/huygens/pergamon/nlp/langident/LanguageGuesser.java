@@ -146,16 +146,16 @@ public abstract class LanguageGuesser {
   abstract protected Stream<Prediction> predictStream(CharSequence doc);
 
   /**
-   * Train language guesser.
+   * Train language guesser (actual implementation).
    *
    * @param docs   List of documents.
    * @param labels List of labels corresponding to documents.
    * @return this
    */
-  public abstract LanguageGuesser train(List<CharSequence> docs, List<String> labels);
+  protected abstract void train(List<CharSequence> docs, List<String> labels);
 
   /**
-   * Train language guesser on a TrainingSet (utility method).
+   * Train language guesser.
    *
    * @param set Training set.
    * @return this

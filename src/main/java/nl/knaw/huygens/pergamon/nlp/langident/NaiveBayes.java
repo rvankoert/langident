@@ -69,15 +69,15 @@ public class NaiveBayes extends LanguageGuesser {
    * @param labels
    */
   @Override
-  public LanguageGuesser train(List<CharSequence> docs, List<String> labels) {
-    featureProb = new HashMap<String, Map<CharSequence, Double>>();
+  protected void train(List<CharSequence> docs, List<String> labels) {
+    featureProb = new HashMap<>();
 
     if (docs.size() != labels.size()) {
       throw new IllegalArgumentException(String.format("%d samples != %d labels", docs.size(), labels.size()));
     }
 
     for (String label : labels) {
-      featureProb.put(label, new HashMap<CharSequence, Double>());
+      featureProb.put(label, new HashMap<>());
     }
 
     for (int i = 0; i < docs.size(); i++) {
@@ -99,8 +99,6 @@ public class NaiveBayes extends LanguageGuesser {
           Math.log(count + pseudocount) - Math.log(totalCount + pseudocount * totalCounts.size()));
       });
     });
-
-    return this;
   }
 
   @Override

@@ -8,13 +8,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 
+/**
+ * A training set is a list of documents, paired with an equally long list of (string) labels.
+ */
 public class TrainingSet {
   private final List<CharSequence> docs;
   private final List<String> labels;
 
-  private TrainingSet(List<CharSequence> docs, List<String> labels) {
+  public TrainingSet(List<CharSequence> docs, List<String> labels) {
+    if (docs.size() != labels.size()) {
+      throw new IllegalArgumentException(
+        format("%d (docs) != %d (labels)", docs.size(), labels.size()));
+    }
     this.docs = unmodifiableList(docs);
     this.labels = unmodifiableList(labels);
   }
