@@ -43,7 +43,7 @@ Then make a LanguageGuesser object, train it on the built-in training set,
 and use it:
 
     TrainingSet builtin = TrainingSet.getBuiltin();
-    LanguageGuesser guesser = new NaiveBayes().train(builtin);
+    Model guesser = new NaiveBayes().train(builtin);
     System.out.println(guesser.predictBest("Welke taal is dit?"));
 
 This should produce "nl" on the standard output stream. More detailed

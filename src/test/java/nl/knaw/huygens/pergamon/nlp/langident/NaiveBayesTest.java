@@ -31,11 +31,11 @@ import java.util.List;
 public class NaiveBayesTest extends LanguageGuesserTest {
   @Test
   public void test() throws IOException, ClassNotFoundException {
-    LanguageGuesser nb = new NaiveBayes();
-    test(nb);
+    Trainer nb = new NaiveBayes();
+    Model model = test(nb);
 
-    List<LanguageGuesser.Prediction> pred = nb.predictScores("zomaar een testje");
-    double total = pred.stream().mapToDouble(LanguageGuesser.Prediction::getScore).sum();
+    List<Model.Prediction> pred = model.predictScores("zomaar een testje");
+    double total = pred.stream().mapToDouble(Model.Prediction::getScore).sum();
     Assert.assertTrue(Math.abs(total - 1) < 1e-14);
   }
 }

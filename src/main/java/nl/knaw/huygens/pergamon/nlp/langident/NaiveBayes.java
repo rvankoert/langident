@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * This is a multinomial Naive Bayes classifier using n-gram features, for 2 <=
  * n <= 7, and a uniform prior over languages.
  */
-public class NaiveBayes extends LanguageGuesser {
+public class NaiveBayes extends BaseLanguageGuesser implements Model {
   // Laplace/Lidstone smoothing parameter, currently fixed.
   private double pseudocount = 1.;
 
@@ -69,7 +69,7 @@ public class NaiveBayes extends LanguageGuesser {
    * @param labels
    */
   @Override
-  protected void train(List<CharSequence> docs, List<String> labels) {
+  protected Model train(List<CharSequence> docs, List<String> labels) {
     featureProb = new HashMap<>();
 
     if (docs.size() != labels.size()) {
@@ -99,6 +99,8 @@ public class NaiveBayes extends LanguageGuesser {
           Math.log(count + pseudocount) - Math.log(totalCount + pseudocount * totalCounts.size()));
       });
     });
+
+    return this;
   }
 
   @Override

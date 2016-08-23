@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * After W.B. Cavnar & J.M. Trenkle, N-gram-based text categorization, SDAIR-1994,
  * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.9367
  */
-public class CavnarTrenkle extends LanguageGuesser {
+public class CavnarTrenkle extends BaseLanguageGuesser implements Model {
   // Keep only this many n-grams for classification. This should be a training-time option,
   // but is hardcoded for now.
   private int cutoff = 400;
@@ -57,7 +57,7 @@ public class CavnarTrenkle extends LanguageGuesser {
     this.maxN = maxN;
   }
 
-  protected void train(List<CharSequence> docs, List<String> labels) {
+  protected Model train(List<CharSequence> docs, List<String> labels) {
     Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
@@ -86,6 +86,8 @@ public class CavnarTrenkle extends LanguageGuesser {
         ranks.put(sorted[rank], rank);
       }
     });
+
+    return this;
   }
 
   // Convert frequency table to list of the <cutoff> most frequent items, in sorted order.

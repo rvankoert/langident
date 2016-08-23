@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Base class for language guesser tests. Actual test cases should call the test()
-// method on a specific LanguageGuesser instance.
+// method on a specific Trainer instance.
 public class LanguageGuesserTest {
   private static String[] english = new String[]{
     "IN Xanadu did Kubla Khan",
@@ -54,7 +54,8 @@ public class LanguageGuesserTest {
     "che nel pensier rinova la paura!"
   };
 
-  protected void test(LanguageGuesser guesser) {
+  // Returns a trained model.
+  protected Model test(Trainer trainer) {
     List<CharSequence> samples = new ArrayList<CharSequence>();
     List<String> labels = new ArrayList<String>();
 
@@ -71,22 +72,24 @@ public class LanguageGuesserTest {
       labels.add("it");
     }
 
-    guesser = guesser.train(new TrainingSet(samples, labels));
+    Model model = trainer.train(new TrainingSet(samples, labels));
 
-    Assert.assertEquals("it", guesser.predictBest("lasciate ogni speranza, voi ch'intrate"));
-    Assert.assertEquals("en", guesser.predictBest("The end is nigh."));
-    Assert.assertEquals("nl", guesser.predictBest("scheveningen"));
+    Assert.assertEquals("it", model.predictBest("lasciate ogni speranza, voi ch'intrate"));
+    Assert.assertEquals("en", model.predictBest("The end is nigh."));
+    Assert.assertEquals("nl", model.predictBest("scheveningen"));
 
-    String[] langs = guesser.languages().stream().sorted().toArray(String[]::new);
+    String[] langs = model.languages().stream().sorted().toArray(String[]::new);
     Assert.assertArrayEquals(new String[]{"en", "it", "nl"}, langs);
 
-    List<LanguageGuesser.Prediction> pred = guesser.predictScores("Hallo, wereld!");
+    List<Model.Prediction> pred = model.predictScores("Hallo, wereld!");
     Assert.assertArrayEquals(langs,
-      pred.stream().map(LanguageGuesser.Prediction::getLang).sorted().toArray());
+      pred.stream().map(Model.Prediction::getLabel).sorted().toArray());
 
     // We want the languages by descending order of scores.
     for (int i = 1; i < pred.size(); i++) {
       Assert.assertTrue(pred.get(i - 1).getScore() >= pred.get(i).getScore());
     }
+
+    return model;
   }
 }

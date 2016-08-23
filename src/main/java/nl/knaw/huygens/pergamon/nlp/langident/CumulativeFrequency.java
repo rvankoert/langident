@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * <p>
  * This is essentially a botched Naive Bayes that adds where it should multiply.
  */
-public class CumulativeFrequency extends LanguageGuesser {
+public class CumulativeFrequency extends BaseLanguageGuesser {
   private static final int MIN_FREQ = 3;
   private static final int TOP_K = 400;
 
@@ -54,13 +54,13 @@ public class CumulativeFrequency extends LanguageGuesser {
         double scoreForLang = featureFreq.get(lang).getOrDefault(ngram, 0.);
         return new Prediction(lang, scoreForLang);
       }))
-      .collect(Collectors.groupingBy(Prediction::getLang,
+      .collect(Collectors.groupingBy(Prediction::getLabel,
         Collectors.summingDouble(Prediction::getScore)))
       .entrySet().stream().map(entry -> new Prediction(entry.getKey(), entry.getValue()));
   }
 
   @Override
-  protected void train(List<CharSequence> docs, List<String> labels) {
+  protected Model train(List<CharSequence> docs, List<String> labels) {
     featureFreq = new HashMap<String, Map<CharSequence, Double>>();
 
     if (docs.size() != labels.size()) {
@@ -89,5 +89,7 @@ public class CumulativeFrequency extends LanguageGuesser {
         prob.put(ngram, count / totalCount);
       });
     });
+
+    return this;
   }
 }

@@ -24,7 +24,7 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
-import nl.knaw.huygens.pergamon.nlp.langident.LanguageGuesser;
+import nl.knaw.huygens.pergamon.nlp.langident.Model;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -37,18 +37,18 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 public class LangIdentResource {
   private final String defaultModel;
-  private final Map<String, LanguageGuesser> models;
+  private final Map<String, Model> models;
 
-  public LangIdentResource(String defaultModel, Map<String, LanguageGuesser> models) {
+  public LangIdentResource(String defaultModel, Map<String, Model> models) {
     this.defaultModel = defaultModel;
     this.models = models;
   }
 
   @POST
   @Timed
-  public List<LanguageGuesser.Prediction> classify(@FormParam("text") String text,
-                                                   @FormParam("model") Optional<String> modelName) {
-    LanguageGuesser model = models.get(modelName.or(defaultModel));
+  public List<Model.Prediction> classify(@FormParam("text") String text,
+                                         @FormParam("model") Optional<String> modelName) {
+    Model model = models.get(modelName.or(defaultModel));
     if (model == null) {
       throw new WebApplicationException(String.format("unknown model '%s'", modelName), 404);
     }
@@ -59,7 +59,7 @@ public class LangIdentResource {
   @Timed
   @Path("/languages")
   public Set<String> listLanguages(@QueryParam("model") Optional<String> modelName) {
-    LanguageGuesser model = models.get(modelName.or(defaultModel));
+    Model model = models.get(modelName.or(defaultModel));
     return model.languages();
   }
 

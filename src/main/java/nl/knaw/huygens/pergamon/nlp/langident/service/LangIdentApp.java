@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LangIdentApp extends Application<LangIdentConfig> {
-  private final Map<String, LanguageGuesser> models = new HashMap<>();
+  private final Map<String, Model> models = new HashMap<>();
 
   private LangIdentApp() throws ClassNotFoundException, IOException {
     TrainingSet set = TrainingSet.getBuiltin();
