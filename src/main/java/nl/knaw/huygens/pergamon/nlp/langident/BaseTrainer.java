@@ -25,8 +25,7 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 import nl.knaw.huygens.algomas.nlp.NGrams;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -36,38 +35,18 @@ import java.util.stream.Stream;
  * Handles n-gram extraction and problem-specific preprocessing.
  */
 abstract class BaseTrainer implements Trainer {
+  private Function<CharSequence, CharSequence> preprocessor;
+
+  BaseTrainer() {
+    this(StandardPreprocessor::preprocess);
+  }
+
+  BaseTrainer(Function<CharSequence, CharSequence> preprocessor) {
+    this.preprocessor = preprocessor;
+  }
+
   // Sizes of n-grams.
   protected int minN = 2, maxN = 7;
-
-  private static final Pattern UNWANTED = Pattern.compile(
-    "([,.:;!?&+*/=\\(\\)\\[\\]‘’\"“”½√♃∙∥\\d])|( -)|(- )"
-  );
-
-  private static final Pattern WHITESPACE = Pattern.compile("\\s+",
-    Pattern.UNICODE_CHARACTER_CLASS);
-
-  /**
-   * Normalizes text for language identification.
-   * Leaves in apostrophes and dashes in words.
-   */
-  private static String preprocess(String text) {
-    // Delete roman numerals; \u0186 is 'Ɔ'.
-    text = text.replaceAll("\\b[IVXLDCM\\u0186]{2,}\\b", "");
-
-    text = text.toLowerCase();
-
-    // Delete initials in personal names.
-    text = text.replaceAll("\\b[a-z][.:]", "");
-
-    // Delete punctuation, quotes, math and digits.
-    Matcher matcher = UNWANTED.matcher(text);
-    text = matcher.replaceAll(" ");
-
-    // Normalize whitespace.
-    matcher = WHITESPACE.matcher(text);
-    text = matcher.replaceAll(" ");
-    return (text.length() == 0) ? "" : " " + text + " ";
-  }
 
   /**
    * Extract n-gram features from doc after preprocessing.
@@ -76,7 +55,7 @@ abstract class BaseTrainer implements Trainer {
    * @return A sequential stream of n-grams, with minN <= n <= maxN.
    */
   protected final Stream<CharSequence> features(CharSequence doc) {
-    return NGrams.ofChars(minN, maxN, preprocess(doc.toString()));
+    return NGrams.ofChars(minN, maxN, preprocessor.apply(doc.toString()));
   }
 
   /**
