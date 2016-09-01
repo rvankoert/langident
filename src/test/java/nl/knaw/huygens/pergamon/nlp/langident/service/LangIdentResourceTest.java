@@ -31,7 +31,7 @@ import java.util.HashMap;
 public class LangIdentResourceTest {
   @Test(expected = WebApplicationException.class)
   public void invalidModelName() {
-    LangIdentResource resource = new LangIdentResource("foo", new HashMap<>());
+    LangIdentResource resource = new LangIdentResource("foo", new HashMap<>(), "foo");
     resource.classify("some input text", Optional.of("bar"));
   }
 }
