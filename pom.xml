@@ -20,6 +20,12 @@
     <url>http://www.huygens.knaw.nl</url>
   </organization>
 
+  <scm>
+    <url>https://github.com/HuygensING/langident</url>
+    <connection>scm:git:git://github.com/HuygensING/langident.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/HuygensING/langident.git</developerConnection>
+  </scm>
+
   <build>
     <plugins>
       <plugin>
@@ -50,6 +56,20 @@
           <licenseName>gpl_v3</licenseName>
           <canUpdateCopyright>true</canUpdateCopyright>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>validate</phase>
+            <goals>
+              <goal>create</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -97,6 +117,13 @@
         <version>2.2</version>
       </extension>
     </extensions>
+
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
   </build>
 
   <distributionManagement>

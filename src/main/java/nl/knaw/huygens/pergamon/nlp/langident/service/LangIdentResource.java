@@ -24,13 +24,14 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import nl.knaw.huygens.pergamon.nlp.langident.Model;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static java.lang.String.format;
 
 @Path("/ident")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -38,35 +39,55 @@ import java.util.Set;
 public class LangIdentResource {
   private final String defaultModel;
   private final Map<String, Model> models;
+  private final String version;
 
-  public LangIdentResource(String defaultModel, Map<String, Model> models) {
+  public LangIdentResource(String defaultModel, Map<String, Model> models, String version) {
     this.defaultModel = defaultModel;
     this.models = models;
+    this.version = version;
   }
 
   @POST
   @Timed
-  public List<Model.Prediction> classify(@FormParam("text") String text,
-                                         @FormParam("model") Optional<String> modelName) {
-    Model model = models.get(modelName.or(defaultModel));
-    if (model == null) {
-      throw new WebApplicationException(String.format("unknown model '%s'", modelName), 404);
-    }
-    return model.predictScores(text);
+  public Map<String, Object> classify(@FormParam("text") String text,
+                                      @QueryParam("model") Optional<String> modelName) {
+    String name = modelName.or(defaultModel);
+    Model model = modelByName(name);
+    return ImmutableMap.of(
+      "model", name,
+      "prediction", model.predictScores(text),
+      "version", version
+    );
   }
 
   @GET
   @Timed
   @Path("/languages")
-  public Set<String> listLanguages(@QueryParam("model") Optional<String> modelName) {
-    Model model = models.get(modelName.or(defaultModel));
-    return model.languages();
+  public Map<String, Object> listLanguages(@QueryParam("model") Optional<String> modelName) {
+    String name = modelName.or(defaultModel);
+    Model model = modelByName(name);
+    return ImmutableMap.of(
+      "languages", model.languages(),
+      "model", name,
+      "version", version
+    );
+  }
+
+  private Model modelByName(String name) {
+    Model model = models.get(name);
+    if (model == null) {
+      throw new WebApplicationException(format("unknown model '%s'", name), 404);
+    }
+    return model;
   }
 
   @GET
-  @Path("/list")
+  @Path("/models")
   @Timed
-  public Set<String> listModels() {
-    return models.keySet();
+  public Map<String, Object> listModels() {
+    return ImmutableMap.of(
+      "models", models.keySet(),
+      "version", version
+    );
   }
 }

@@ -32,6 +32,11 @@ public interface Model {
   }
 
   /**
+   * @return The Trainer that produced this model.
+   */
+  Trainer getTrainer();
+
+  /**
    * The set of languages known to this language guesser.
    *
    * @return An immutable Set of language codes.

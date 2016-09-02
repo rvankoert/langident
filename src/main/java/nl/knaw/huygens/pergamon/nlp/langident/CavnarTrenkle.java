@@ -36,13 +36,45 @@ import java.util.stream.Stream;
  * After W.B. Cavnar & J.M. Trenkle, N-gram-based text categorization, SDAIR-1994,
  * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.9367
  */
-public class CavnarTrenkle extends BaseLanguageGuesser implements Model {
+public class CavnarTrenkle extends BaseTrainer {
+  private class CTModel extends BaseModel {
+    // N-gram frequency ranks: maps label -> n-gram -> frequency.
+    private final Map<String, Map<CharSequence, Integer>> rankPerLabel = new HashMap<>();
+
+    @Override
+    public Trainer getTrainer() {
+      return CavnarTrenkle.this;
+    }
+
+    @Override
+    public Set<String> languages() {
+      return rankPerLabel.keySet();
+    }
+
+    @Override
+    protected Stream<Prediction> predictStream(CharSequence doc) {
+      CharSequence[] docProfile = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
+        Collectors.counting())));
+
+      return rankPerLabel.entrySet().parallelStream()
+        .map(entry -> {
+          String label = entry.getKey();
+          long dist = distance(docProfile, entry.getValue());
+          // The predictBest method wants scores with "higher is better", but what
+          // we have are distances ("smaller is better"). The following is an
+          // arbitrary way of converting these into scores; the +1 prevents zero
+          // division.
+          double score = 1. / (dist + 1.);
+
+          return new Prediction(label, score);
+        });
+    }
+
+  }
+
   // Keep only this many n-grams for classification. This should be a training-time option,
   // but is hardcoded for now.
   private int cutoff = 400;
-
-  // N-gram frequency ranks: maps label -> n-gram -> frequency.
-  private Map<String, Map<CharSequence, Integer>> rankPerLabel;
 
   public CavnarTrenkle() {
   }
@@ -58,10 +90,11 @@ public class CavnarTrenkle extends BaseLanguageGuesser implements Model {
   }
 
   protected Model train(List<CharSequence> docs, List<String> labels) {
+    CTModel model = new CTModel();
     Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
-    rankPerLabel = new HashMap<>();
+    Map<String, Map<CharSequence, Integer>> rankPerLabel = model.rankPerLabel;
 
     for (int i = 0; i < docs.size(); i++) {
       String label = labels.get(i);
@@ -87,7 +120,7 @@ public class CavnarTrenkle extends BaseLanguageGuesser implements Model {
       }
     });
 
-    return this;
+    return model;
   }
 
   // Convert frequency table to list of the <cutoff> most frequent items, in sorted order.
@@ -97,32 +130,8 @@ public class CavnarTrenkle extends BaseLanguageGuesser implements Model {
     Sort.partial(entries, (e1, e2) -> Long.compare(e2.getValue(), e1.getValue()), cutoff);
 
     return entries.subList(0, Math.min(cutoff, entries.size())).stream()
-      .map(entry -> entry.getKey())
+      .map(Map.Entry::getKey)
       .toArray(CharSequence[]::new);
-  }
-
-  @Override
-  public Set<String> languages() {
-    return rankPerLabel.keySet();
-  }
-
-  @Override
-  protected Stream<Prediction> predictStream(CharSequence doc) {
-    CharSequence[] docProfile = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
-      Collectors.counting())));
-
-    return rankPerLabel.entrySet().parallelStream()
-      .map(entry -> {
-        String label = entry.getKey();
-        long dist = distance(docProfile, entry.getValue());
-        // The predictBest method wants scores with "higher is better", but what
-        // we have are distances ("smaller is better"). The following is an
-        // arbitrary way of converting these into scores; the +1 prevents zero
-        // division.
-        double score = 1. / (dist + 1.);
-
-        return new Prediction(label, score);
-      });
   }
 
   // Cavnar-Trenkle "out of place distance" between two ranked lists.

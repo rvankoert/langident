@@ -13,8 +13,8 @@ Accuracy scores on a held-out set of "hard" (very short) examples are:
 * naivebayes: 142/2969 errors = 95.22% accuracy
 
 
-Installation
-============
+Use as a library
+================
 
 To use as a library from Maven, put the following in your pom.xml:
 
@@ -48,3 +48,38 @@ and use it:
 
 This should produce "nl" on the standard output stream. More detailed
 information is available from the predictScores method.
+
+
+Web service
+===========
+
+To use langident as a web service, build it:
+
+    mvn package
+
+Start the server:
+
+    java -jar target/langident-${langident.version} server
+
+Then try it out, in another terminal window:
+
+    curl http://localhost:8080/ident -d text="C'est quel langue?" | jq .
+
+The [jq](https://stedolan.github.io/jq/) command does pretty-printing of JSON.
+It can also give you the highest-scoring language, which is always the first
+one listed:
+
+    curl http://localhost:8080/ident -d text="C'est quel langue?" |
+        jq .prediction[0].label
+
+Langident has several built-in models, which are available from
+
+    curl http://localhost:8080/ident/models
+
+To use a different model, pass it as a GET parameter:
+
+    curl http://localhost:8080/ident?model=naivebayes -d text="che lingua è?"
+
+The list of known languages is available from the /ident/languages endpoint:
+
+    curl http://localhost:8080/ident/languages?model=cavnartrenkle

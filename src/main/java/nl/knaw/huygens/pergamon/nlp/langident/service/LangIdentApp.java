@@ -28,14 +28,23 @@ import io.dropwizard.setup.Environment;
 import nl.knaw.huygens.pergamon.nlp.langident.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class LangIdentApp extends Application<LangIdentConfig> {
+  private final String version; // Git commit SHA-1 of langident, for identification purposes.
   private final Map<String, Model> models = new HashMap<>();
 
   private LangIdentApp() throws ClassNotFoundException, IOException {
     TrainingSet set = TrainingSet.getBuiltin();
+
+    try (InputStream buildNum = getClass().getResourceAsStream("/buildNumber.properties")) {
+      Properties prop = new Properties();
+      prop.load(buildNum);
+      version = prop.getProperty("gitsha1");
+    }
 
     // We train our models here because training them is much cheaper than serializing and deserializing them
     // (Naive Bayes models tend to get big because there's no feature selection).
@@ -59,7 +68,7 @@ public class LangIdentApp extends Application<LangIdentConfig> {
 
   @Override
   public void run(LangIdentConfig config, Environment env) {
-    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models);
+    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models, version);
     env.jersey().register(resource);
   }
 }
