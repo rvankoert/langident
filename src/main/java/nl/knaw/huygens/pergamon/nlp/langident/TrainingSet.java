@@ -30,7 +30,7 @@ public class TrainingSet {
   /**
    * Gets the built-in training set.
    */
-  static public TrainingSet getBuiltin() throws IOException {
+  public static TrainingSet getBuiltin() throws IOException {
     // Load training data from our packaged JSON file. The format is [[label, doc], ...].
     InputStream trainingData = TrainingSet.class.getResourceAsStream("/training-data.json");
     ArrayNode allData = (ArrayNode) new ObjectMapper().readTree(trainingData);

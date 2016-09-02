@@ -16,23 +16,24 @@ class StandardPreprocessor {
    * Leaves in apostrophes and dashes in words.
    */
   static String preprocess(CharSequence text) {
-    String s = text.toString();
+    String str = text.toString();
 
     // Delete roman numerals; \u0186 is 'Ɔ'.
-    s = s.replaceAll("\\b[IVXLDCM\\u0186]{2,}\\b", "");
+    str = str.replaceAll("\\b[IVXLDCMƆ]{2,}\\b", "");
 
-    s = s.toLowerCase();
+    str = str.toLowerCase();
 
     // Delete initials in personal names.
-    s = s.replaceAll("\\b[a-z][.:]", "");
+    str = str.replaceAll("\\b[a-z][.:]", "");
 
     // Delete punctuation, quotes, math and digits.
-    Matcher matcher = UNWANTED.matcher(s);
-    s = matcher.replaceAll(" ");
+    Matcher matcher = UNWANTED.matcher(str);
+    str = matcher.replaceAll(" ");
 
     // Normalize whitespace.
-    matcher = WHITESPACE.matcher(s);
-    s = matcher.replaceAll(" ");
-    return (s.length() == 0) ? "" : " " + s + " ";
+    matcher = WHITESPACE.matcher(str);
+    str = matcher.replaceAll(" ");
+
+    return str.isEmpty() ? "" : " " + str + " ";
   }
 }

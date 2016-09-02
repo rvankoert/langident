@@ -34,10 +34,11 @@ import java.util.stream.Stream;
  * (Proceedings of Student/Faculty Research Day, CSIS, Pace University, May 7th, 2004).
  * <p>
  * This is essentially a botched Naive Bayes that adds where it should multiply.
+ * </p>
  */
 public class CumulativeFrequency extends BaseTrainer {
-  private class CFModel extends BaseModel {
-    private Map<String, Map<CharSequence, Double>> featureFreq = new HashMap<>();
+  private class CumulativeFrequencyModel extends BaseModel {
+    private final Map<String, Map<CharSequence, Double>> featureFreq = new HashMap<>();
 
     @Override
     public Trainer getTrainer() {
@@ -53,13 +54,13 @@ public class CumulativeFrequency extends BaseTrainer {
     protected Stream<Prediction> predictStream(CharSequence doc) {
       Set<String> langs = languages();
       return features(doc).parallel()
-        .flatMap(ngram -> langs.parallelStream().map(lang -> {
-          double scoreForLang = featureFreq.get(lang).getOrDefault(ngram, 0.);
-          return new Prediction(lang, scoreForLang);
-        }))
-        .collect(Collectors.groupingBy(Prediction::getLabel,
-          Collectors.summingDouble(Prediction::getScore)))
-        .entrySet().stream().map(entry -> new Prediction(entry.getKey(), entry.getValue()));
+                          .flatMap(ngram -> langs.parallelStream().map(lang -> {
+                            double scoreForLang = featureFreq.get(lang).getOrDefault(ngram, 0.);
+                            return new Prediction(lang, scoreForLang);
+                          }))
+                          .collect(Collectors.groupingBy(Prediction::getLabel,
+                            Collectors.summingDouble(Prediction::getScore)))
+                          .entrySet().stream().map(entry -> new Prediction(entry.getKey(), entry.getValue()));
     }
   }
 
@@ -69,14 +70,14 @@ public class CumulativeFrequency extends BaseTrainer {
 
   @Override
   protected Model train(List<CharSequence> docs, List<String> labels) {
-    CFModel model = new CFModel();
+    CumulativeFrequencyModel model = new CumulativeFrequencyModel();
 
     if (docs.size() != labels.size()) {
       throw new IllegalArgumentException(String.format("%d samples != %d labels", docs.size(), labels.size()));
     }
 
     for (String label : labels) {
-      model.featureFreq.put(label, new HashMap<CharSequence, Double>());
+      model.featureFreq.put(label, new HashMap<>());
     }
 
     for (int i = 0; i < docs.size(); i++) {
@@ -85,7 +86,7 @@ public class CumulativeFrequency extends BaseTrainer {
         .forEach(ngram -> fp.compute(ngram, (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
     }
 
-    Map<CharSequence, Double> totalCounts = new HashMap<CharSequence, Double>();
+    Map<CharSequence, Double> totalCounts = new HashMap<>();
     model.featureFreq.forEach((label, counts) -> {
       counts.forEach((ngram, count) -> totalCounts.put(ngram, totalCounts.getOrDefault(ngram, 0.) + count));
     });

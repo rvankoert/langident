@@ -11,8 +11,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <encoding>UTF-8</encoding>
     <jdk.version>1.8</jdk.version>
-    <dropwizard.version>0.9.3</dropwizard.version>
+    <dropwizard.version>1.0.0</dropwizard.version>
+    <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
   </properties>
 
   <organization>
@@ -35,7 +37,7 @@
         <configuration>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
-          <encoding>UTF-8</encoding>
+          <encoding>${encoding}</encoding>
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
@@ -98,12 +100,34 @@
             <configuration>
               <transformers>
                 <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                 <transformer
-                  implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>nl.knaw.huygens.pergamon.nlp.langident.service.LangIdentApp</mainClass>
                 </transformer>
               </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven-checkstyle-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <configLocation>src/main/resources/checkstyle_config.xml</configLocation>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <encoding>${encoding}</encoding>
+              <consoleOutput>true</consoleOutput>
+              <failsOnError>true</failsOnError>
             </configuration>
           </execution>
         </executions>
@@ -164,15 +188,17 @@
       <version>${dropwizard.version}</version>
     </dependency>
     <dependency>
+      <groupId>nl.knaw.huygens.algomas</groupId>
+      <artifactId>algomas-core</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+
+    <!-- test dependencies -->
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>nl.knaw.huygens.algomas</groupId>
-      <artifactId>algomas-core</artifactId>
-      <version>1.5.0</version>
     </dependency>
   </dependencies>
 </project>

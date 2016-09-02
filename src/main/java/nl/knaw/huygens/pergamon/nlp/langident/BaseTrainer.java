@@ -33,9 +33,10 @@ import java.util.stream.Stream;
  * based on character n-gram features.
  * <p>
  * Handles n-gram extraction and problem-specific preprocessing.
+ * </p>
  */
 abstract class BaseTrainer implements Trainer {
-  private Function<CharSequence, CharSequence> preprocessor;
+  private final Function<CharSequence, CharSequence> preprocessor;
 
   BaseTrainer() {
     this(StandardPreprocessor::preprocess);
@@ -46,7 +47,8 @@ abstract class BaseTrainer implements Trainer {
   }
 
   // Sizes of n-grams.
-  protected int minN = 2, maxN = 7;
+  protected int minN = 2;
+  protected int maxN = 7;
 
   /**
    * Extract n-gram features from doc after preprocessing.

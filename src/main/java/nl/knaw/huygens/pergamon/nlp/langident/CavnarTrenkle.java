@@ -24,7 +24,11 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 
 import nl.knaw.huygens.algomas.Sort;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,9 +39,10 @@ import java.util.stream.Stream;
  * <p>
  * After W.B. Cavnar & J.M. Trenkle, N-gram-based text categorization, SDAIR-1994,
  * http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.53.9367
+ * </p>
  */
 public class CavnarTrenkle extends BaseTrainer {
-  private class CTModel extends BaseModel {
+  private class CavnarTrenkleModel extends BaseModel {
     // N-gram frequency ranks: maps label -> n-gram -> frequency.
     private final Map<String, Map<CharSequence, Integer>> rankPerLabel = new HashMap<>();
 
@@ -57,17 +62,17 @@ public class CavnarTrenkle extends BaseTrainer {
         Collectors.counting())));
 
       return rankPerLabel.entrySet().parallelStream()
-        .map(entry -> {
-          String label = entry.getKey();
-          long dist = distance(docProfile, entry.getValue());
-          // The predictBest method wants scores with "higher is better", but what
-          // we have are distances ("smaller is better"). The following is an
-          // arbitrary way of converting these into scores; the +1 prevents zero
-          // division.
-          double score = 1. / (dist + 1.);
+                         .map(entry -> {
+                           String label = entry.getKey();
+                           long dist = distance(docProfile, entry.getValue());
+                           // The predictBest method wants scores with "higher is better", but what
+                           // we have are distances ("smaller is better"). The following is an
+                           // arbitrary way of converting these into scores; the +1 prevents zero
+                           // division.
+                           double score = 1. / (dist + 1.);
 
-          return new Prediction(label, score);
-        });
+                           return new Prediction(label, score);
+                         });
     }
 
   }
@@ -90,7 +95,7 @@ public class CavnarTrenkle extends BaseTrainer {
   }
 
   protected Model train(List<CharSequence> docs, List<String> labels) {
-    CTModel model = new CTModel();
+    CavnarTrenkleModel model = new CavnarTrenkleModel();
     Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
@@ -130,8 +135,8 @@ public class CavnarTrenkle extends BaseTrainer {
     Sort.partial(entries, (e1, e2) -> Long.compare(e2.getValue(), e1.getValue()), cutoff);
 
     return entries.subList(0, Math.min(cutoff, entries.size())).stream()
-      .map(Map.Entry::getKey)
-      .toArray(CharSequence[]::new);
+                  .map(Map.Entry::getKey)
+                  .toArray(CharSequence[]::new);
   }
 
   // Cavnar-Trenkle "out of place distance" between two ranked lists.

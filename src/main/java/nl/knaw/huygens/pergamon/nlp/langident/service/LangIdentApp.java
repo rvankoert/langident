@@ -25,7 +25,11 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import nl.knaw.huygens.pergamon.nlp.langident.*;
+import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
+import nl.knaw.huygens.pergamon.nlp.langident.CumulativeFrequency;
+import nl.knaw.huygens.pergamon.nlp.langident.Model;
+import nl.knaw.huygens.pergamon.nlp.langident.NaiveBayes;
+import nl.knaw.huygens.pergamon.nlp.langident.TrainingSet;
 
 import java.io.IOException;
 import java.io.InputStream;

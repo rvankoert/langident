@@ -23,8 +23,9 @@ public interface Model {
     /**
      * The score of this Prediction's language wrt. the input.
      * <p>
-     * The interpretation of these scores is algorithm-specific; they may
-     * be probabilities, similarity scores or inverse distances.
+     * The interpretation of these scores is algorithm-specific; they may be probabilities, similarity scores or
+     * inverse distances.
+     * </p>
      */
     public double getScore() {
       return score;

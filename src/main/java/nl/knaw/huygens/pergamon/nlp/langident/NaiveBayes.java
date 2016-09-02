@@ -34,16 +34,17 @@ import java.util.stream.Stream;
 /**
  * Naive Bayes classifier for language identification.
  * <p>
- * This is a multinomial Naive Bayes classifier using n-gram features, for 2 <=
- * n <= 7, and a uniform prior over languages.
+ * This is a multinomial Naive Bayes classifier using n-gram features, for 2 <= * n <= 7, and a uniform prior over
+ * languages.
+ * </p>
  */
 public class NaiveBayes extends BaseTrainer {
-  private class NBModel extends BaseModel {
+  private class NaiveBayesModel extends BaseModel {
     // Feature log-probabilities per label.
     // Maps label -> ngram -> log(P(ngram)).
-    private Map<String, Map<CharSequence, Double>> featureProb;
+    private final Map<String, Map<CharSequence, Double>> featureProb;
 
-    public NBModel() {
+    public NaiveBayesModel() {
       featureProb = new HashMap<>();
     }
 
@@ -73,7 +74,7 @@ public class NaiveBayes extends BaseTrainer {
       });
 
       double logTotal = prob.entrySet().stream().mapToDouble(Map.Entry::getValue)
-        .reduce(ExtMath::logAddExp).getAsDouble();
+                            .reduce(ExtMath::logAddExp).getAsDouble();
       return prob.entrySet().stream().map(entry ->
         new Prediction(entry.getKey(), Math.exp(entry.getValue() - logTotal)));
     }
@@ -97,15 +98,13 @@ public class NaiveBayes extends BaseTrainer {
   /**
    * Train Naive Bayes model on labeled documents.
    * <p>
-   * Each i'th element of docs is expected have the i'th label in labels. If
-   * the length of these two arrays doesn't match, an exception is thrown.
-   *
-   * @param docs
-   * @param labels
+   * Each i'th element of docs is expected have the i'th label in labels. If * the length of these two arrays doesn't
+   * match, an exception is thrown.
+   * </p>
    */
   @Override
   protected Model train(List<CharSequence> docs, List<String> labels) {
-    NBModel model = new NBModel();
+    NaiveBayesModel model = new NaiveBayesModel();
     Map<String, Map<CharSequence, Double>> featureProb = model.featureProb;
 
     if (docs.size() != labels.size()) {
@@ -122,7 +121,7 @@ public class NaiveBayes extends BaseTrainer {
         .forEach(ngram -> fp.compute(ngram, (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
     }
 
-    Map<CharSequence, Double> totalCounts = new HashMap<CharSequence, Double>();
+    Map<CharSequence, Double> totalCounts = new HashMap<>();
     featureProb.forEach((label, counts) -> {
       counts.forEach((ngram, count) -> totalCounts.put(ngram, totalCounts.getOrDefault(ngram, 0.) + count));
     });

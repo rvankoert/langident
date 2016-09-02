@@ -33,6 +33,7 @@ import static java.util.Comparator.comparing;
  * based on character n-gram features.
  * <p>
  * Handles n-gram extraction and problem-specific preprocessing.
+ * </p>
  */
 abstract class BaseModel implements Model {
   @Override
