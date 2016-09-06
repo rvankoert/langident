@@ -1,11 +1,13 @@
-FROM java:8
+FROM maven:3.3-jdk-8
 
-COPY langident.yml /root
-COPY target/langident-*.jar /root/langident.jar
+COPY . /root/langident-build
 
-WORKDIR /root
+WORKDIR /root/langident-build
+
+RUN ls
+RUN mvn clean package
 
 EXPOSE 8080
 EXPOSE 8081
 
-CMD ["java", "-jar", "langident.jar", "server", "langident.yml"]
+CMD ["./target/appassembler/bin/langident", "server", "langident.yml"]
