@@ -30,6 +30,7 @@ import nl.knaw.huygens.pergamon.nlp.langident.CumulativeFrequency;
 import nl.knaw.huygens.pergamon.nlp.langident.Model;
 import nl.knaw.huygens.pergamon.nlp.langident.NaiveBayes;
 import nl.knaw.huygens.pergamon.nlp.langident.TrainingSet;
+import nl.knaw.huygens.pergamon.nlp.langident.health.ModelHealthCheck;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,5 +75,6 @@ public class LangIdentApp extends Application<LangIdentConfig> {
   public void run(LangIdentConfig config, Environment env) {
     LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models, version);
     env.jersey().register(resource);
+    env.healthChecks().register("models", new ModelHealthCheck(resource));
   }
 }
