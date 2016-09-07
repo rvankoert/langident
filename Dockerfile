@@ -4,7 +4,7 @@ COPY . /root/langident-build
 
 WORKDIR /root/langident-build
 
-RUN mvn clean package
+RUN mvn package
 
 EXPOSE 8080
 EXPOSE 8081
