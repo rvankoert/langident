@@ -59,7 +59,7 @@ To use langident as a web service, build it:
 
 Start the server:
 
-    java -jar target/langident-${langident.version} server
+    target/appassembler/bin/langident server
 
 Then try it out, in another terminal window:
 
