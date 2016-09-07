@@ -30,7 +30,7 @@ import nl.knaw.huygens.pergamon.nlp.langident.CumulativeFrequency;
 import nl.knaw.huygens.pergamon.nlp.langident.Model;
 import nl.knaw.huygens.pergamon.nlp.langident.NaiveBayes;
 import nl.knaw.huygens.pergamon.nlp.langident.TrainingSet;
-import nl.knaw.huygens.pergamon.nlp.langident.health.ModelHealthCheck;
+import nl.knaw.huygens.pergamon.nlp.langident.service.health.ModelHealthCheck;
 
 import java.io.IOException;
 import java.io.InputStream;

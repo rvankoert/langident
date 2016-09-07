@@ -1,4 +1,4 @@
-package nl.knaw.huygens.pergamon.nlp.langident.health;
+package nl.knaw.huygens.pergamon.nlp.langident.service.health;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Optional;
