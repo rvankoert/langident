@@ -22,11 +22,11 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  * #L%
  */
 
-import com.google.common.base.Optional;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class LangIdentResourceTest {
   @Test(expected = WebApplicationException.class)

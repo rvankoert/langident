@@ -23,7 +23,6 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  */
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import nl.knaw.huygens.pergamon.nlp.langident.Model;
 
@@ -37,6 +36,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
@@ -58,7 +58,7 @@ public class LangIdentResource {
   @Timed
   public Map<String, Object> classify(@FormParam("text") String text,
                                       @QueryParam("model") Optional<String> modelName) {
-    String name = modelName.or(defaultModel);
+    String name = modelName.orElse(defaultModel);
     Model model = modelByName(name);
     return ImmutableMap.of(
       "model", name,
@@ -71,7 +71,7 @@ public class LangIdentResource {
   @Timed
   @Path("/languages")
   public Map<String, Object> listLanguages(@QueryParam("model") Optional<String> modelName) {
-    String name = modelName.or(defaultModel);
+    String name = modelName.orElse(defaultModel);
     Model model = modelByName(name);
     return ImmutableMap.of(
       "languages", model.languages(),

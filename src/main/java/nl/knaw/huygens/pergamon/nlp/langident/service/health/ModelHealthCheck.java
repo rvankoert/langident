@@ -23,9 +23,9 @@ package nl.knaw.huygens.pergamon.nlp.langident.service.health;
  */
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.base.Optional;
 import nl.knaw.huygens.pergamon.nlp.langident.service.LangIdentResource;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class ModelHealthCheck extends HealthCheck {
