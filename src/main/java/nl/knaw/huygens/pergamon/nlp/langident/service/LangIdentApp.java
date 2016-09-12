@@ -34,22 +34,27 @@ import nl.knaw.huygens.pergamon.nlp.langident.service.health.ModelHealthCheck;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 public class LangIdentApp extends Application<LangIdentConfig> {
-  private final String version; // Git commit SHA-1 of langident, for identification purposes.
   private final Map<String, Model> models = new HashMap<>();
+  static final String version; // Git commit SHA-1 of langident, for identification purposes.
 
-  private LangIdentApp() throws ClassNotFoundException, IOException {
-    TrainingSet set = TrainingSet.getBuiltin();
-
-    try (InputStream buildNum = getClass().getResourceAsStream("/buildNumber.properties")) {
+  static {
+    try (InputStream buildNum = LangIdentApp.class.getResourceAsStream("/buildNumber.properties")) {
       Properties prop = new Properties();
       prop.load(buildNum);
       version = prop.getProperty("gitsha1");
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
+  }
+
+  private LangIdentApp() throws IOException {
+    TrainingSet set = TrainingSet.getBuiltin();
 
     // We train our models here because training them is much cheaper than serializing and deserializing them
     // (Naive Bayes models tend to get big because there's no feature selection).
@@ -73,7 +78,7 @@ public class LangIdentApp extends Application<LangIdentConfig> {
 
   @Override
   public void run(LangIdentConfig config, Environment env) {
-    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models, version);
+    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models);
     env.jersey().register(resource);
     env.healthChecks().register("models", new ModelHealthCheck(resource));
   }
