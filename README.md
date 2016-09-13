@@ -1,6 +1,8 @@
 Langident
 =========
 
+[![Docker Automated build](https://img.shields.io/docker/automated/huygensing/langident.svg)](https://hub.docker.com/r/huygensing/langident)
+
 This is a language guesser for historical text. It distinguishes between
 German, English, French, Latin and Dutch (that is, the seventeenth-century
 variants of all those).
