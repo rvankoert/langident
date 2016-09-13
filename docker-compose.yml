@@ -1,0 +1,8 @@
+version: '2' # version of this docker-compose file, unrelated to the langident version
+
+services:
+  web:
+    image: huygensing/langident:latest
+    ports:
+    - "9090:8080" # exposes langident's web service (runs on port 8080 inside container) via port 9090 on host
+    - "9091:8081" # exposes langident's admin services (runs on port 8081 inside container) via port 9091 on host
