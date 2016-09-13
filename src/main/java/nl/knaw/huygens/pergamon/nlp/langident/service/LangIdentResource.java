@@ -46,10 +46,12 @@ import static java.lang.String.format;
 public class LangIdentResource {
   private final String defaultModel;
   private final Map<String, Model> models;
+  private final String version;
 
-  public LangIdentResource(String defaultModel, Map<String, Model> models) {
+  public LangIdentResource(String defaultModel, Map<String, Model> models, String version) {
     this.defaultModel = defaultModel;
     this.models = models;
+    this.version = version;
   }
 
   @POST
@@ -61,7 +63,7 @@ public class LangIdentResource {
     return ImmutableMap.of(
       "model", name,
       "prediction", model.predictScores(text),
-      "version", LangIdentApp.version
+      "version", version
     );
   }
 
@@ -74,7 +76,7 @@ public class LangIdentResource {
     return ImmutableMap.of(
       "languages", model.languages(),
       "model", name,
-      "version", LangIdentApp.version
+      "version", version
     );
   }
 
@@ -92,7 +94,7 @@ public class LangIdentResource {
   public Map<String, Object> listModels() {
     return ImmutableMap.of(
       "models", models.keySet(),
-      "version", LangIdentApp.version
+      "version", version
     );
   }
 }

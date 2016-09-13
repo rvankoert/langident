@@ -78,7 +78,7 @@ public class LangIdentApp extends Application<LangIdentConfig> {
 
   @Override
   public void run(LangIdentConfig config, Environment env) {
-    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models);
+    LangIdentResource resource = new LangIdentResource(config.getDefaultModel(), models, version);
     env.jersey().register(resource);
     env.healthChecks().register("models", new ModelHealthCheck(resource));
   }

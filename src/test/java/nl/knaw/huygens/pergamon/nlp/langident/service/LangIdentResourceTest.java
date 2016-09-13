@@ -22,16 +22,36 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  * #L%
  */
 
+import com.google.common.collect.ImmutableMap;
+import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
+import nl.knaw.huygens.pergamon.nlp.langident.TrainingSet;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
+import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LangIdentResourceTest {
   @Test(expected = WebApplicationException.class)
   public void invalidModelName() {
-    LangIdentResource resource = new LangIdentResource("foo", new HashMap<>());
+    LangIdentResource resource = new LangIdentResource("foo", new HashMap<>(), "foo");
     resource.classify("some input text", Optional.of("bar"));
+  }
+
+  @Test
+  public void listLanguages() throws IOException {
+    LangIdentResource resource = new LangIdentResource("ct",
+      ImmutableMap.of("ct", new CavnarTrenkle().train(TrainingSet.getBuiltin())),
+      "bla");
+    Map<String, Object> languages = resource.listLanguages(Optional.empty());
+    assertEquals("ct", languages.get("model"));
+    assertEquals("bla", languages.get("version"));
+    assertTrue(((Collection<?>) languages.get("languages")).contains("it"));
   }
 }
