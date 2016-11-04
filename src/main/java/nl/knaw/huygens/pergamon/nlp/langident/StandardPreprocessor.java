@@ -54,7 +54,7 @@ class StandardPreprocessor {
 
     // Normalize whitespace.
     matcher = WHITESPACE.matcher(str);
-    str = matcher.replaceAll(" ");
+    str = matcher.replaceAll(" ").trim();
 
     return str.isEmpty() ? "" : " " + str + " ";
   }
