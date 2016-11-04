@@ -53,7 +53,7 @@ public class StandardPreprocessorTest extends LanguageGuesserTest {
 
   @Test
   public void testPreprocessQuotes() {
-    testPreprocessing(" a b c ", "‘a’ \"b\" “c”");
+    testPreprocessing(" a b c d ", "‘a’ \"b\" “c” «d»");
   }
 
   @Test

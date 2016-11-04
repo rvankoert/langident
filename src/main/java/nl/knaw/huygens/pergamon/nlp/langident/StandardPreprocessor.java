@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 class StandardPreprocessor {
   private static final Pattern UNWANTED = Pattern.compile(
-    "([,.:;!?&+*/=\\(\\)\\[\\]‘’\"“”½√♃∙∥\\d])|( -)|(- )"
+    "([,.:;!?&+*/=\\(\\)\\[\\]‘’\"“”«»½√♃∙∥\\d])|( -)|(- )"
   );
 
   private static final Pattern WHITESPACE = Pattern.compile("\\s+",
@@ -40,7 +40,7 @@ class StandardPreprocessor {
   static String preprocess(CharSequence text) {
     String str = text.toString();
 
-    // Delete roman numerals; \u0186 is 'Ɔ'.
+    // Delete Roman numerals.
     str = str.replaceAll("\\b[IVXLDCMƆ]{2,}\\b", "");
 
     str = str.toLowerCase();
