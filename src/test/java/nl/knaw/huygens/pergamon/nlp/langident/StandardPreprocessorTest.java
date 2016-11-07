@@ -32,7 +32,7 @@ public class StandardPreprocessorTest {
   }
 
   @Test
-  public void testPreprocessRomanNumerals() {
+  public void testRomanNumerals() {
     // within text
     testPreprocessing(" aa bb ", "AA XIV BB");
     // start of text
@@ -42,43 +42,43 @@ public class StandardPreprocessorTest {
   }
 
   @Test
-  public void testPreprocessPunctuation() {
+  public void testPunctuation() {
     testPreprocessing(" xx xx xx xx xx xx xx xx xx ", "xx,xx.xx:xx;xx!xx?xx&xx/xx");
   }
 
   @Test
-  public void testPreprocessDigits() {
+  public void testDigits() {
     testPreprocessing(" d d d d ", "d1d123d0d");
   }
 
   @Test
-  public void testPreprocessQuotes() {
+  public void testQuotes() {
     testPreprocessing(" a b c d ", "‘a’ \"b\" “c” «d»");
   }
 
   @Test
-  public void testPreprocessParenthesis() {
+  public void testParentheses() {
     testPreprocessing(" a b c def ", "((a) b) c d(e)f");
   }
 
   @Test
-  public void testPreprocessBrackets() {
+  public void testBrackets() {
     testPreprocessing(" a b c def ", "[[a] b] c d[e]f");
   }
 
   @Test
-  public void testPreprocessDashes() {
+  public void testDashes() {
     testPreprocessing(" x x-x x ", "x- x-x -x");
   }
 
   @Test
-  public void testPreprocessInitials() {
+  public void testInitials() {
     testPreprocessing(" signed ", "Signed H.v.M.");
     testPreprocessing(" leeuwenhoek ", "A: Leeuwenhoek");
   }
 
   @Test
-  public void testPreprocessMath() {
+  public void testMath() {
     testPreprocessing(" kx a p a ¾q z a b c ", "Kx = ½ a/p2 + ½a + ¾q - √z2/a + b*c");
   }
 

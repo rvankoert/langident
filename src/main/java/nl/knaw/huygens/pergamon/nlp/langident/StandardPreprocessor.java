@@ -44,7 +44,7 @@ class StandardPreprocessor {
     // Delete initials in personal names.
     str = str.replaceAll("\\b[a-z][.:]", "");
 
-    // Delete brackets and parenthesis - they may be intra-word.
+    // Delete brackets and parentheses - they may be intra-word.
     str = str.replaceAll("[\\[\\]\\(\\)]", "");
 
     // Delete punctuation, quotes, math and digits.
