@@ -25,7 +25,7 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class StandardPreprocessorTest extends LanguageGuesserTest {
+public class StandardPreprocessorTest {
 
   private void testPreprocessing(String expected, String input) {
     Assert.assertEquals("<" + input + ">", expected, StandardPreprocessor.preprocess(input));
@@ -58,12 +58,12 @@ public class StandardPreprocessorTest extends LanguageGuesserTest {
 
   @Test
   public void testPreprocessParenthesis() {
-    testPreprocessing(" a b c ", "((a) b) c");
+    testPreprocessing(" a b c def ", "((a) b) c d(e)f");
   }
 
   @Test
   public void testPreprocessBrackets() {
-    testPreprocessing(" a b c ", "[[a] b] c");
+    testPreprocessing(" a b c def ", "[[a] b] c d[e]f");
   }
 
   @Test

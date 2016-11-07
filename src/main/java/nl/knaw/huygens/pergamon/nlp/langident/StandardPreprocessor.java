@@ -26,12 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class StandardPreprocessor {
-  private static final Pattern UNWANTED = Pattern.compile(
-    "([,.:;!?&+*/=\\(\\)\\[\\]‘’\"“”«»½√♃∙∥\\d])|( -)|(- )"
-  );
-
-  private static final Pattern WHITESPACE = Pattern.compile("\\s+",
-    Pattern.UNICODE_CHARACTER_CLASS);
+  private static final Pattern UNWANTED = Pattern.compile("([,.:;!?&+*/=‘’\"“”«»½√♃∙∥\\d])|( -)|(- )");
+  private static final Pattern WHITESPACE = Pattern.compile("\\s+", Pattern.UNICODE_CHARACTER_CLASS);
 
   /**
    * Normalizes text for language identification.
@@ -47,6 +43,9 @@ class StandardPreprocessor {
 
     // Delete initials in personal names.
     str = str.replaceAll("\\b[a-z][.:]", "");
+
+    // Delete brackets and parenthesis - they may be intra-word.
+    str = str.replaceAll("[\\[\\]\\(\\)]", "");
 
     // Delete punctuation, quotes, math and digits.
     Matcher matcher = UNWANTED.matcher(str);
