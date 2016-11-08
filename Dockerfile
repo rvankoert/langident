@@ -3,6 +3,12 @@ FROM java:8-jdk-alpine
 ARG MAVEN_VERSION=3.3.9
 ENV MAVEN_HOME=/usr/lib/mvn
 
+WORKDIR /
+
+COPY .git /build/.git
+
+ENV PATH $PATH:$MAVEN_HOME/bin
+
 # Install maven and git (using proper tar and wget, rather than their limited busybox cousins)
 RUN apk update \
   && apk upgrade \
@@ -13,21 +19,16 @@ RUN apk update \
     | sha1sum -c - \
   && mkdir -p $MAVEN_HOME \
   && tar xf apache-maven-$MAVEN_VERSION-bin.tar.gz -C $MAVEN_HOME --strip-components=1 \
-  && apk del tar wget \
-  && rm -rf /var/cache/apk/* \
-  && rm apache-maven-$MAVEN_VERSION-bin.tar.gz apache-maven-$MAVEN_VERSION-bin.tar.gz.sha1
-
-ENV PATH $PATH:$MAVEN_HOME/bin
-
-WORKDIR /build
-
-COPY .git /build/.git
-
-RUN git reset --hard HEAD \
+  && rm apache-maven-$MAVEN_VERSION-bin.tar.gz apache-maven-$MAVEN_VERSION-bin.tar.gz.sha1 \
+  && cd /build \
+  && git reset --hard HEAD \
   && mvn package \
-  && rm -rf ~/.m2/repository \
-  && rm -rf target/classes
+  && cp -R target/appassembler/* /usr/local \
+  && mv langident.yml /etc \
+  && cd / \
+  && apk del git tar wget \
+  && rm -rf /build ~/.m2 "$MAVEN_HOME" /var/cache/apk/*
 
 EXPOSE 8080 8081
 
-CMD ["target/appassembler/bin/langident", "server", "langident.yml"]
+CMD ["/usr/local/bin/langident", "server", "/etc/langident.yml"]
