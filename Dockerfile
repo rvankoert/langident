@@ -21,11 +21,12 @@ ENV PATH $PATH:$MAVEN_HOME/bin
 
 WORKDIR /build
 
-COPY . /build
+COPY .git /build/.git
 
-RUN mvn package \
-# && du -hs ~/.m2/repository \
-  && rm -rf ~/.m2/repository
+RUN git reset --hard HEAD \
+  && mvn package \
+  && rm -rf ~/.m2/repository \
+  && rm -rf target/classes
 
 EXPOSE 8080 8081
 
