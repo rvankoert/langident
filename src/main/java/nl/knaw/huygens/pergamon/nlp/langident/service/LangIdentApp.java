@@ -44,10 +44,10 @@ public class LangIdentApp extends Application<LangIdentConfig> {
   static final String version; // Git commit SHA-1 of langident, for identification purposes.
 
   static {
-    try (InputStream buildNum = LangIdentApp.class.getResourceAsStream("/buildNumber.properties")) {
+    try (InputStream versionProp = LangIdentApp.class.getResourceAsStream("/version.properties")) {
       Properties prop = new Properties();
-      prop.load(buildNum);
-      version = prop.getProperty("gitsha1");
+      prop.load(versionProp);
+      version = prop.getProperty("version");
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
