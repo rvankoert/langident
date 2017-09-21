@@ -42,7 +42,7 @@ abstract class BaseTrainer implements Trainer {
     this(StandardPreprocessor::preprocess);
   }
 
-  BaseTrainer(Function<CharSequence, CharSequence> preprocessor) {
+  private BaseTrainer(Function<CharSequence, CharSequence> preprocessor) {
     this.preprocessor = preprocessor;
   }
 

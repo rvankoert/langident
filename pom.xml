@@ -7,7 +7,7 @@
 
   <groupId>nl.knaw.huygens.pergamon</groupId>
   <artifactId>langident</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
 
   <properties>
     <encoding>UTF-8</encoding>
@@ -110,6 +110,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-javadoc</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
     <extensions>
@@ -168,7 +180,7 @@
     <dependency>
       <groupId>nl.knaw.huygens.algomas</groupId>
       <artifactId>algomas-core</artifactId>
-      <version>1.5.0</version>
+      <version>1.9.3</version>
     </dependency>
 
     <!-- test dependencies -->

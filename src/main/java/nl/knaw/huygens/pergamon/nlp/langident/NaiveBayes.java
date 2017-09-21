@@ -69,7 +69,7 @@ public class NaiveBayes extends BaseTrainer {
 
       features(doc).forEach(ngram -> {
         labels.forEach(label -> {
-          prob.put(label, prob.get(label) + featureProb.get(label).getOrDefault(ngram, 0.));
+          prob.put(label, prob.get(label) + featureProb.get(label).getOrDefault(ngram.toString(), 0.));
         });
       });
 
@@ -118,7 +118,7 @@ public class NaiveBayes extends BaseTrainer {
     for (int i = 0; i < docs.size(); i++) {
       Map<CharSequence, Double> fp = featureProb.get(labels.get(i));
       features(docs.get(i))
-        .forEach(ngram -> fp.compute(ngram, (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
+        .forEach(ngram -> fp.compute(ngram.toString(), (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
     }
 
     Map<CharSequence, Double> totalCounts = new HashMap<>();
