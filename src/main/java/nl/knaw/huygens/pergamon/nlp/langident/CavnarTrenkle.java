@@ -25,7 +25,6 @@ package nl.knaw.huygens.pergamon.nlp.langident;
 import nl.knaw.huygens.algomas.Sort;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,14 +95,12 @@ public class CavnarTrenkle extends BaseTrainer {
 
   protected Model train(List<CharSequence> docs, List<String> labels) {
     CavnarTrenkleModel model = new CavnarTrenkleModel();
-    Set<String> labelSet = new HashSet<>();
 
     Map<String, Map<CharSequence, Long>> freqPerLabel = new HashMap<>();
     Map<String, Map<CharSequence, Integer>> rankPerLabel = model.rankPerLabel;
 
     for (int i = 0; i < docs.size(); i++) {
       String label = labels.get(i);
-      labelSet.add(label);
       freqPerLabel.put(label, new HashMap<>());
       rankPerLabel.put(label, new HashMap<>());
     }

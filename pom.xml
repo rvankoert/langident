@@ -7,7 +7,7 @@
 
   <groupId>nl.knaw.huygens.pergamon</groupId>
   <artifactId>langident</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
 
   <properties>
     <encoding>UTF-8</encoding>
