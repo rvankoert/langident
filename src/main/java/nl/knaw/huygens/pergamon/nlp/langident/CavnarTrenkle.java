@@ -58,9 +58,8 @@ public class CavnarTrenkle extends BaseTrainer {
 
     @Override
     protected Stream<Prediction> predictStream(CharSequence doc) {
-      CharSequence[] docProfile = freqsToRanks(features(doc).map(CharSequence::toString)
-                                                            .collect(Collectors.groupingBy(Function.identity(),
-                                                              Collectors.counting())));
+      CharSequence[] docProfile = freqsToRanks(features(doc).collect(Collectors.groupingBy(Function.identity(),
+        Collectors.counting())));
 
       return rankPerLabel.entrySet().parallelStream()
                          .map(entry -> {
@@ -113,7 +112,7 @@ public class CavnarTrenkle extends BaseTrainer {
       String label = labels.get(i);
       features(docs.get(i)).forEach(ngram -> {
         Map<CharSequence, Long> freq = freqPerLabel.get(label);
-        freq.compute(ngram.toString(), (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1);
+        freq.compute(ngram, (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1);
       });
     }
 

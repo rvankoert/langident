@@ -55,7 +55,7 @@ public class CumulativeFrequency extends BaseTrainer {
       Set<String> langs = languages();
       return features(doc).parallel()
                           .flatMap(ngram -> langs.parallelStream().map(lang -> {
-                            double scoreForLang = featureFreq.get(lang).getOrDefault(ngram.toString(), 0.);
+                            double scoreForLang = featureFreq.get(lang).getOrDefault(ngram, 0.);
                             return new Prediction(lang, scoreForLang);
                           }))
                           .collect(Collectors.groupingBy(Prediction::getLabel,
@@ -83,12 +83,12 @@ public class CumulativeFrequency extends BaseTrainer {
     for (int i = 0; i < docs.size(); i++) {
       Map<CharSequence, Double> fp = model.featureFreq.get(labels.get(i));
       features(docs.get(i))
-        .forEach(ngram -> fp.compute(ngram.toString(), (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
+        .forEach(ngram -> fp.compute(ngram, (ng, oldCount) -> (oldCount == null ? 0 : oldCount) + 1));
     }
 
     Map<CharSequence, Double> totalCounts = new HashMap<>();
     model.featureFreq.forEach((label, counts) -> {
-      counts.forEach((ngram, count) -> totalCounts.put(ngram.toString(), totalCounts.getOrDefault(ngram, 0.) + count));
+      counts.forEach((ngram, count) -> totalCounts.put(ngram, totalCounts.getOrDefault(ngram, 0.) + count));
     });
 
     // Normalize counts.
