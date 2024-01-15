@@ -22,9 +22,9 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  * #L%
  */
 
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
 import nl.knaw.huygens.pergamon.nlp.langident.CumulativeFrequency;
 import nl.knaw.huygens.pergamon.nlp.langident.Model;

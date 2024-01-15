@@ -23,7 +23,7 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class LangIdentConfig extends Configuration {

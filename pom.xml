@@ -7,23 +7,23 @@
 
   <groupId>nl.knaw.huygens.pergamon</groupId>
   <artifactId>langident</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
 
   <properties>
     <encoding>UTF-8</encoding>
-    <dropwizard.version>1.0.0</dropwizard.version>
-    <jdk.version>1.8</jdk.version>
-    <junit.version>4.12</junit.version>
-    <maven-appassembler-plugin.version>1.10</maven-appassembler-plugin.version>
+    <dropwizard.version>4.0.5</dropwizard.version>
+    <jdk.version>11</jdk.version>
+    <junit.version>4.13.2</junit.version>
+    <maven-appassembler-plugin.version>2.1.0</maven-appassembler-plugin.version>
     <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
     <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
-    <license-maven-plugin.version>1.9</license-maven-plugin.version>
+    <license-maven-plugin.version>2.3.0</license-maven-plugin.version>
     <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
   </properties>
 
   <organization>
-    <name>Huygens ING (KNAW)</name>
-    <url>http://www.huygens.knaw.nl</url>
+    <name>Huygens (KNAW)</name>
+    <url>https://www.huygens.knaw.nl</url>
   </organization>
 
   <scm>
@@ -144,12 +144,12 @@
     <repository>
       <id>maven.huygens</id>
       <name>Huygens Maven Repository</name>
-      <url>${huygens-repo}</url>
+      <url>https://maven.huygens.knaw.nl/repository/</url>
     </repository>
     <snapshotRepository>
       <id>maven.huygens.snapshot</id>
       <name>Huygens Maven Snapshot Repository</name>
-      <url>${huygens-repo}</url>
+      <url>https://maven.huygens.knaw.nl/repository/</url>
       <uniqueVersion>false</uniqueVersion>
     </snapshotRepository>
   </distributionManagement>
@@ -157,7 +157,7 @@
   <repositories>
     <repository>
       <id>huygens</id>
-      <url>http://maven.huygens.knaw.nl/repository/</url>
+      <url>https://maven.huygens.knaw.nl/repository/</url>
       <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>

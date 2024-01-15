@@ -23,11 +23,11 @@ package nl.knaw.huygens.pergamon.nlp.langident.service;
  */
 
 import com.google.common.collect.ImmutableMap;
+import jakarta.ws.rs.WebApplicationException;
 import nl.knaw.huygens.pergamon.nlp.langident.CavnarTrenkle;
 import nl.knaw.huygens.pergamon.nlp.langident.TrainingSet;
 import org.junit.Test;
 
-import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
